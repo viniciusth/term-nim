@@ -1,9 +1,6 @@
 use axum::{routing::get, Router};
 use local_ip_address::local_ip;
 
-pub mod game;
-pub mod ui;
-
 #[tokio::main]
 async fn main() {
     // initialize tracing
