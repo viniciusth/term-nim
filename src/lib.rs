@@ -22,10 +22,10 @@ impl App {
         }
     }
 
-    pub fn render<B: Backend>(&self, frame: &mut Frame<B>) {
-        match self.state {
-            AppState::Menu(ref menu_state) => menu_state.render(frame),
-            AppState::Game(ref game_state) => todo!(),
+    pub fn render<B: Backend>(&mut self, frame: &mut Frame<B>) {
+        match &mut self.state {
+            AppState::Menu(menu_state) => menu_state.render(frame),
+            AppState::Game(game_state) => todo!(),
         }
     }
 

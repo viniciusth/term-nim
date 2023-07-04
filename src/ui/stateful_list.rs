@@ -1,16 +1,21 @@
-use tui::widgets::ListState;
+use tui::{
+    backend::Backend,
+    layout::Rect,
+    style::{Modifier, Style},
+    widgets::{List, ListItem, ListState},
+    Frame,
+};
 
-struct StatefulList<T> {
+pub struct StatefulList<T> {
     state: ListState,
     items: Vec<T>,
 }
 
-impl<T> StatefulList<T> {
+impl<T: ToString> StatefulList<T> {
     pub fn with_items(items: Vec<T>) -> StatefulList<T> {
-        StatefulList {
-            state: ListState::default(),
-            items,
-        }
+        let mut state = ListState::default();
+        state.select(Some(0));
+        StatefulList { state, items }
     }
 
     pub fn next(&mut self) {
@@ -43,5 +48,17 @@ impl<T> StatefulList<T> {
 
     pub fn unselect(&mut self) {
         self.state.select(None);
+    }
+
+    pub fn render<B: Backend>(&mut self, frame: &mut Frame<B>, area: Rect) {
+        let items: Vec<ListItem> = self
+            .items
+            .iter()
+            .map(|i| ListItem::new(i.to_string()))
+            .collect();
+        let list = List::new(items)
+            .highlight_style(Style::default().add_modifier(Modifier::BOLD))
+            .highlight_symbol(">> ");
+        frame.render_stateful_widget(list, area, &mut self.state);
     }
 }

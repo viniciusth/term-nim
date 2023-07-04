@@ -1,23 +1,31 @@
 use crossterm::event::KeyCode;
 use tui::{
     backend::Backend,
-    layout::{Constraint, Direction, Layout},
+    layout::{Alignment, Constraint, Direction, Layout, Margin},
     style::Style,
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
 
-use super::utils::get_center_of_rect_for_text;
+use crate::game::{PileAmount, PileSize};
+
+use super::{stateful_list::StatefulList, utils::get_center_of_rect_for_text};
 
 pub enum MenuState {
-    MainMenu { selected: Option<bool> },
-    GameSettings,
+    MainMenu {
+        selected: Option<bool>,
+    },
+    GameSettings {
+        selected: Option<bool>,
+        amounts: StatefulList<PileAmount>,
+        sizes: StatefulList<PileSize>,
+    },
     ConnectToPeer,
     WaitingForConnection,
 }
 
 impl MenuState {
-    pub fn render<B: Backend>(&self, frame: &mut Frame<B>) {
+    pub fn render<B: Backend>(&mut self, frame: &mut Frame<B>) {
         match self {
             MenuState::MainMenu { selected } => {
                 let chunks = Layout::default()
@@ -52,7 +60,63 @@ impl MenuState {
                     frame.render_widget(selected_block, chunks[*selected as usize]);
                 }
             }
-            MenuState::GameSettings => todo!(),
+            MenuState::GameSettings {
+                selected,
+                amounts,
+                sizes,
+            } => {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .margin(2)
+                    .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+                    .split(frame.size());
+
+                let simple_block = Block::default().borders(Borders::ALL);
+
+                let titles = ["Pile Amount", "Pile Size"];
+
+                frame.render_widget(
+                    simple_block
+                        .clone()
+                        .title(titles[0])
+                        .title_alignment(Alignment::Center),
+                    chunks[0],
+                );
+                frame.render_widget(
+                    simple_block
+                        .clone()
+                        .title(titles[1])
+                        .title_alignment(Alignment::Center),
+                    chunks[1],
+                );
+
+                if let Some(selected) = selected {
+                    let selected_block = Block::default()
+                        .borders(Borders::ALL)
+                        .border_type(tui::widgets::BorderType::Thick)
+                        .border_style(Style::default().fg(tui::style::Color::Green))
+                        .title(titles[*selected as usize])
+                        .title_alignment(Alignment::Center);
+
+                    frame.render_widget(selected_block, chunks[*selected as usize]);
+                }
+
+                amounts.render(
+                    frame,
+                    chunks[0].inner(&Margin {
+                        vertical: 1,
+                        horizontal: 1,
+                    }),
+                );
+
+                sizes.render(
+                    frame,
+                    chunks[1].inner(&Margin {
+                        vertical: 1,
+                        horizontal: 1,
+                    }),
+                );
+            }
             MenuState::ConnectToPeer => todo!(),
             MenuState::WaitingForConnection => todo!(),
         }
@@ -72,7 +136,19 @@ impl MenuState {
                         *self = MenuState::ConnectToPeer;
                     }
                     Some(false) => {
-                        *self = MenuState::GameSettings;
+                        *self = MenuState::GameSettings {
+                            selected: None,
+                            amounts: StatefulList::with_items(vec![
+                                PileAmount::Two,
+                                PileAmount::Five,
+                                PileAmount::Ten,
+                            ]),
+                            sizes: StatefulList::with_items(vec![
+                                PileSize::Small,
+                                PileSize::Medium,
+                                PileSize::Large,
+                            ]),
+                        };
                     }
                     None => {
                         *selected = Some(false);
@@ -80,7 +156,48 @@ impl MenuState {
                 },
                 _ => {}
             },
-            MenuState::GameSettings => todo!(),
+            MenuState::GameSettings {
+                selected,
+                amounts,
+                sizes,
+            } => match key {
+                KeyCode::Left => {
+                    *selected = Some(false);
+                }
+                KeyCode::Right => {
+                    *selected = Some(true);
+                }
+                KeyCode::Down => match selected {
+                    Some(true) => {
+                        sizes.previous();
+                    }
+                    Some(false) => {
+                        amounts.previous();
+                    }
+                    _ => {}
+                },
+                KeyCode::Up => match selected {
+                    Some(true) => {
+                        sizes.next();
+                    }
+                    Some(false) => {
+                        amounts.next();
+                    }
+                    _ => {}
+                },
+                KeyCode::Enter => match selected {
+                    Some(true) => {
+                        *self = MenuState::WaitingForConnection;
+                    }
+                    Some(false) => {
+                        *self = MenuState::WaitingForConnection;
+                    }
+                    None => {
+                        *selected = Some(false);
+                    }
+                },
+                _ => {}
+            },
             MenuState::ConnectToPeer => todo!(),
             MenuState::WaitingForConnection => todo!(),
         }

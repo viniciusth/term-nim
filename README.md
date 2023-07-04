@@ -18,7 +18,7 @@ The UI should be fairly self-explanatory. The game is played by two players, eac
 - [x] Basic game logic
 - [ ] UI
   - [x] Main Menu
-  - [ ] Game options
+  - [x] Game options
   - [ ] Game state (choice of piles and number of sticks)
   - [ ] Player turn
   - [ ] Game over

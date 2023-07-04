@@ -77,6 +77,8 @@ fn run_app<B: Backend>(
             if let Event::Key(key) = event::read()? {
                 if let KeyCode::Char('q') = key.code {
                     return Ok(());
+                } else if let KeyCode::Esc = key.code {
+                    return Ok(());
                 }
                 app.handle_key(key.code);
             }

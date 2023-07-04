@@ -16,6 +16,17 @@ impl PileAmount {
     }
 }
 
+impl ToString for PileAmount {
+    fn to_string(&self) -> String {
+        match self {
+            Self::Two => "Two",
+            Self::Five => "Five",
+            Self::Ten => "Ten",
+        }
+        .to_string()
+    }
+}
+
 pub enum PileSize {
     Small,
     Medium,
@@ -29,6 +40,17 @@ impl PileSize {
             Self::Medium => 10,
             Self::Large => 20,
         }
+    }
+}
+
+impl ToString for PileSize {
+    fn to_string(&self) -> String {
+        match self {
+            Self::Small => "Small",
+            Self::Medium => "Medium",
+            Self::Large => "Large",
+        }
+        .to_string()
     }
 }
 
