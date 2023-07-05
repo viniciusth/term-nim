@@ -1,4 +1,5 @@
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 pub enum PileAmount {
     Two,
@@ -54,10 +55,26 @@ impl ToString for PileSize {
     }
 }
 
+#[derive(Deserialize, Serialize, Clone)]
 pub struct GameState {
     pub piles: Vec<u8>,
     pub selected_pile: usize,
-    pub is_current_player: bool,
+    pub current_player: CurrentPlayer,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub enum CurrentPlayer {
+    Host,
+    Guest,
+}
+
+impl CurrentPlayer {
+    pub fn flip(&mut self) {
+        *self = match self {
+            Self::Host => Self::Guest,
+            Self::Guest => Self::Host,
+        }
+    }
 }
 
 impl GameState {
@@ -68,13 +85,13 @@ impl GameState {
                 .map(|_| rng.gen_range(1..=pile_sizes.quantity_limit()))
                 .collect(),
             selected_pile: 0,
-            is_current_player: true,
+            current_player: CurrentPlayer::Host,
         }
     }
 
     pub fn pick(&mut self, amount: u8) {
         self.piles[self.selected_pile] -= amount;
-        self.is_current_player = !self.is_current_player;
+        self.current_player.flip();
     }
 
     pub fn move_selection(&mut self, delta: i8) {

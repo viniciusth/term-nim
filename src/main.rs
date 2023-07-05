@@ -1,10 +1,8 @@
-use axum::{routing::get, Router};
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use local_ip_address::local_ip;
 use std::{
     io,
     time::{Duration, Instant},
@@ -45,20 +43,6 @@ async fn main() {
     if let Err(err) = res {
         println!("{:?}", err)
     }
-    let local_ip = local_ip().unwrap();
-    println!("{local_ip}");
-
-    // build our application with a route
-    // let app = Router::new()
-    //     // `GET /` goes to `root`
-    //     .route("/", get(root));
-
-    let url = format!("{}:3000", local_ip);
-
-    // axum::Server::bind(&url.parse().unwrap())
-    //     .serve(app.into_make_service())
-    //     .await
-    //     .unwrap();
 }
 
 fn run_app<B: Backend>(
@@ -88,9 +72,4 @@ fn run_app<B: Backend>(
             last_tick = Instant::now();
         }
     }
-}
-
-// basic handler that responds with a static string
-async fn root() -> &'static str {
-    "Hello, World!"
 }

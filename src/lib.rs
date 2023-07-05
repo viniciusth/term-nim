@@ -3,6 +3,7 @@ use game::{GameState, PileAmount, PileSize};
 use tui::{backend::Backend, Frame};
 use ui::menu::MenuState;
 
+pub mod comms;
 pub mod game;
 pub mod ui;
 

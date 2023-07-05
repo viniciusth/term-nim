@@ -22,8 +22,8 @@ The UI should be fairly self-explanatory. The game is played by two players, eac
   - [ ] Game state (choice of piles and number of sticks)
   - [ ] Player turn
   - [ ] Game over
-- [ ] Local network multiplayer
-  - [ ] Communication protocol
-  - [ ] Server
-  - [ ] Client
+- [X] Local network multiplayer
+  - [X] Communication protocol
+  - [X] Server
+  - [X] Client
 - [ ] AI opponent
