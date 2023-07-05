@@ -1,7 +1,7 @@
 use crossterm::event::KeyCode;
 use tui::{
     backend::Backend,
-    layout::{Alignment, Constraint, Direction, Layout, Margin},
+    layout::{Constraint, Direction, Layout, Margin},
     style::Style,
     widgets::{Block, Borders, Paragraph},
     Frame,
@@ -75,28 +75,15 @@ impl MenuState {
 
                 let titles = ["Pile Amount", "Pile Size"];
 
-                frame.render_widget(
-                    simple_block
-                        .clone()
-                        .title(titles[0])
-                        .title_alignment(Alignment::Center),
-                    chunks[0],
-                );
-                frame.render_widget(
-                    simple_block
-                        .clone()
-                        .title(titles[1])
-                        .title_alignment(Alignment::Center),
-                    chunks[1],
-                );
+                frame.render_widget(simple_block.clone().title(titles[0]), chunks[0]);
+                frame.render_widget(simple_block.clone().title(titles[1]), chunks[1]);
 
                 if let Some(selected) = selected {
                     let selected_block = Block::default()
                         .borders(Borders::ALL)
                         .border_type(tui::widgets::BorderType::Thick)
                         .border_style(Style::default().fg(tui::style::Color::Green))
-                        .title(titles[*selected as usize])
-                        .title_alignment(Alignment::Center);
+                        .title(titles[*selected as usize]);
 
                     frame.render_widget(selected_block, chunks[*selected as usize]);
                 }

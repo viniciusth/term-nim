@@ -6,6 +6,8 @@ use tui::{
     Frame,
 };
 
+use super::utils::get_center_of_rect_for_list;
+
 pub struct StatefulList<T> {
     state: ListState,
     items: Vec<T>,
@@ -51,12 +53,9 @@ impl<T: ToString> StatefulList<T> {
     }
 
     pub fn render<B: Backend>(&mut self, frame: &mut Frame<B>, area: Rect) {
-        let items: Vec<ListItem> = self
-            .items
-            .iter()
-            .map(|i| ListItem::new(i.to_string()))
-            .collect();
-        let list = List::new(items)
+        let items: Vec<String> = self.items.iter().map(|i| i.to_string()).collect();
+        let area = get_center_of_rect_for_list(&area, &items);
+        let list = List::new(items.into_iter().map(ListItem::new).collect::<Vec<_>>())
             .highlight_style(Style::default().add_modifier(Modifier::BOLD))
             .highlight_symbol(">> ");
         frame.render_stateful_widget(list, area, &mut self.state);
