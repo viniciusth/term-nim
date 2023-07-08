@@ -19,3 +19,20 @@ pub fn get_center_of_rect_for_list(rect: &Rect, list: &[String]) -> Rect {
     let height = list.len() as u16;
     Rect::new(x - (width + 1) / 2 - 2, y - (height + 1) / 2, width, height)
 }
+
+pub fn get_center_of_rect_for_rect(
+    rect: &Rect,
+    inner_rect_width: u16,
+    inner_rect_height: u16,
+) -> Rect {
+    let center_x = rect.width / 2;
+    let center_y = rect.height / 2;
+    let x = rect.x + center_x;
+    let y = rect.y + center_y;
+    Rect::new(
+        x - (inner_rect_width + 1) / 2,
+        y - (inner_rect_height + 1) / 2,
+        inner_rect_width,
+        inner_rect_height,
+    )
+}

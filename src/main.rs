@@ -59,9 +59,7 @@ fn run_app<B: Backend>(
             .unwrap_or_else(|| Duration::from_secs(0));
         if crossterm::event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
-                if let KeyCode::Char('q') = key.code {
-                    return Ok(());
-                } else if let KeyCode::Esc = key.code {
+                if let KeyCode::Esc = key.code {
                     return Ok(());
                 }
                 app.handle_key(key.code);

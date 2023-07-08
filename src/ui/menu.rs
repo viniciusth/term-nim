@@ -9,7 +9,9 @@ use tui::{
 
 use crate::game::{PileAmount, PileSize};
 
-use super::{stateful_list::StatefulList, utils::get_center_of_rect_for_text};
+use super::{
+    form::StringForm, popup::Popup, stateful_list::StatefulList, utils::get_center_of_rect_for_text,
+};
 
 pub enum MenuState {
     MainMenu {
@@ -20,8 +22,12 @@ pub enum MenuState {
         amounts: StatefulList<PileAmount>,
         sizes: StatefulList<PileSize>,
     },
-    ConnectToPeer,
-    WaitingForConnection,
+    ConnectToPeer {
+        form: StringForm,
+    },
+    WaitingForConnection {
+        popup: Popup,
+    },
 }
 
 impl MenuState {
@@ -104,8 +110,10 @@ impl MenuState {
                     }),
                 );
             }
-            MenuState::ConnectToPeer => todo!(),
-            MenuState::WaitingForConnection => todo!(),
+            MenuState::ConnectToPeer { form } => {
+                form.render(frame);
+            }
+            MenuState::WaitingForConnection { popup } => popup.render(frame),
         }
     }
 
@@ -120,7 +128,9 @@ impl MenuState {
                 }
                 KeyCode::Enter => match selected {
                     Some(true) => {
-                        *self = MenuState::ConnectToPeer;
+                        *self = MenuState::ConnectToPeer {
+                            form: StringForm::new("Connect to peer".into(), 20),
+                        };
                     }
                     Some(false) => {
                         *self = MenuState::GameSettings {
@@ -154,7 +164,7 @@ impl MenuState {
                 KeyCode::Right => {
                     *selected = Some(true);
                 }
-                KeyCode::Down => match selected {
+                KeyCode::Up => match selected {
                     Some(true) => {
                         sizes.previous();
                     }
@@ -163,7 +173,7 @@ impl MenuState {
                     }
                     _ => {}
                 },
-                KeyCode::Up => match selected {
+                KeyCode::Down => match selected {
                     Some(true) => {
                         sizes.next();
                     }
@@ -173,11 +183,13 @@ impl MenuState {
                     _ => {}
                 },
                 KeyCode::Enter => match selected {
-                    Some(true) => {
-                        *self = MenuState::WaitingForConnection;
-                    }
-                    Some(false) => {
-                        *self = MenuState::WaitingForConnection;
+                    Some(_) => {
+                        *self = MenuState::WaitingForConnection {
+                            popup: Popup::new(
+                                "Waiting for connection".into(),
+                                "Should connect to ip lalala:3020".into(),
+                            ),
+                        };
                     }
                     None => {
                         *selected = Some(false);
@@ -185,8 +197,8 @@ impl MenuState {
                 },
                 _ => {}
             },
-            MenuState::ConnectToPeer => todo!(),
-            MenuState::WaitingForConnection => todo!(),
+            MenuState::ConnectToPeer { form } => form.handle_key(key),
+            MenuState::WaitingForConnection { .. } => {}
         }
     }
 }

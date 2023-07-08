@@ -1,5 +1,5 @@
 use crossterm::event::KeyCode;
-use game::{GameState, PileAmount, PileSize};
+use game::GameState;
 use tui::{backend::Backend, Frame};
 use ui::menu::MenuState;
 
@@ -26,14 +26,14 @@ impl App {
     pub fn render<B: Backend>(&mut self, frame: &mut Frame<B>) {
         match &mut self.state {
             AppState::Menu(menu_state) => menu_state.render(frame),
-            AppState::Game(game_state) => todo!(),
+            AppState::Game(_) => todo!(),
         }
     }
 
     pub fn handle_key(&mut self, key: KeyCode) {
         match &mut self.state {
             AppState::Menu(menu_state) => menu_state.handle_key(key),
-            AppState::Game(ref game_state) => todo!(),
+            AppState::Game(_) => todo!(),
         }
     }
 }
