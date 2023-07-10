@@ -26,9 +26,9 @@ async fn main() {
     let mut terminal = Terminal::new(backend).unwrap();
 
     // create app and run it
-    let tick_rate = Duration::from_millis(250);
+    let tick_rate = Duration::from_millis(100);
     let app = App::new();
-    let res = run_app(&mut terminal, app, tick_rate);
+    let res = run_app(&mut terminal, app, tick_rate).await;
 
     // restore terminal
     disable_raw_mode().unwrap();
@@ -45,7 +45,7 @@ async fn main() {
     }
 }
 
-fn run_app<B: Backend>(
+async fn run_app<B: Backend>(
     terminal: &mut Terminal<B>,
     mut app: App,
     tick_rate: Duration,
@@ -62,11 +62,11 @@ fn run_app<B: Backend>(
                 if let KeyCode::Esc = key.code {
                     return Ok(());
                 }
-                app.handle_key(key.code);
+                app.handle_key(key.code).await;
             }
         }
         if last_tick.elapsed() >= tick_rate {
-            // app.on_tick();
+            app.on_tick().await;
             last_tick = Instant::now();
         }
     }

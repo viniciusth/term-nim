@@ -12,18 +12,19 @@ cargo run [--release]
 ```
 
 ## Playing
-The UI should be fairly self-explanatory. The game is played by two players, each taking turns removing a number of sticks from any pile. The player who removes the last stick loses.
+The UI should be fairly self-explanatory. The game is played by two players, each taking turns removing a number of sticks from any pile. The player who cannot make a move loses.
 
 ## Roadmap
 - [x] Basic game logic
-- [ ] UI
+- [x] UI
   - [x] Main Menu
   - [x] Game options
-  - [ ] Game state (choice of piles and number of sticks)
-  - [ ] Player turn
-  - [ ] Game over
+  - [x] Game state (choice of piles and number of sticks)
+  - [x] Player turn
+  - [x] Game over
 - [X] Local network multiplayer
   - [X] Communication protocol
   - [X] Server
   - [X] Client
 - [ ] AI opponent
+- [ ] Error handling

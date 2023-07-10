@@ -2,20 +2,20 @@ use crossterm::event::KeyCode;
 use tui::{
     backend::Backend,
     layout::{Alignment, Rect},
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, Borders, Paragraph, Wrap},
     Frame,
 };
 
 pub struct StringForm {
-    pub label: String,
-    pub expected_input_size: u16,
-    state: String,
+    label: String,
+    expected_input_size: u16,
+    pub state: String,
 }
 
 impl StringForm {
-    pub fn new(label: String, expected_input_size: u16) -> Self {
+    pub fn new(label: String, expected_input_size: u16, state: Option<String>) -> Self {
         Self {
-            state: String::new(),
+            state: state.unwrap_or_default(),
             label,
             expected_input_size,
         }
@@ -37,7 +37,7 @@ impl StringForm {
 
         frame.render_widget(popup_block, inner);
 
-        let popup_text = Paragraph::new(self.state.as_str());
+        let popup_text = Paragraph::new(self.state.as_str()).wrap(Wrap { trim: false });
         let shifted_inner = Rect {
             x: inner.x + 2,
             // center height
@@ -46,6 +46,7 @@ impl StringForm {
             height: inner.height,
         };
         frame.render_widget(popup_text, shifted_inner);
+        frame.set_cursor(shifted_inner.x + self.state.len() as u16, shifted_inner.y)
     }
 
     pub fn handle_key(&mut self, key: KeyCode) {
@@ -60,7 +61,7 @@ impl StringForm {
         }
     }
 
-    pub fn consume(self) -> String {
-        self.state
+    pub fn consume(&self) -> String {
+        self.state.clone()
     }
 }

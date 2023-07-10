@@ -27,12 +27,13 @@ pub fn get_center_of_rect_for_rect(
 ) -> Rect {
     let center_x = rect.width / 2;
     let center_y = rect.height / 2;
-    let x = rect.x + center_x;
-    let y = rect.y + center_y;
+    let x = (rect.x + center_x) - (inner_rect_width + 1).min(2 * (rect.x + center_x)) / 2;
+    let y = (rect.y + center_y) - (inner_rect_height + 1).min(2 * (rect.y + center_y)) / 2;
+
     Rect::new(
-        x - (inner_rect_width + 1) / 2,
-        y - (inner_rect_height + 1) / 2,
-        inner_rect_width,
-        inner_rect_height,
+        x,
+        y,
+        inner_rect_width.min(rect.x + rect.width),
+        inner_rect_height.min(rect.y + rect.height),
     )
 }
